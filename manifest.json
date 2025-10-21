@@ -1,0 +1,22 @@
+{
+  "name": "Cohérence Cardiaque",
+  "short_name": "Respire",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#4facfe",
+  "description": "Appli de cohérence cardiaque guidée",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
