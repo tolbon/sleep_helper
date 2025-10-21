@@ -18,10 +18,12 @@ function toggleAnimation() {
     circle.classList.remove('paused');
     toggleBtn.textContent = '⏸️ Pause';
     startCountdown();
+    requestWakeLock();
   } else {
     circle.classList.add('paused');
     toggleBtn.textContent = '▶️ Démarrer';
     stopCountdown();
+    releaseWakeLock();
   }
 }
 
@@ -30,6 +32,7 @@ function startCountdown() {
 
   intervalId = setTimeout(() => {
     toggleAnimation(); // stop when time is up
+    releaseWakeLock();
   }, remainingTime * 1000);
 
   countdownId = setInterval(() => {
@@ -59,3 +62,36 @@ function updateTimerDisplay() {
 // Initialiser
 updateTimerDisplay();
 toggleBtn.addEventListener('click', toggleAnimation);
+
+
+let wakeLock = null;
+
+// Fonction pour demander le Wake Lock
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('🔒 Wake Lock activé');
+
+      // En cas de perte (ex : changement d'onglet), tenter de le redemander
+      wakeLock.addEventListener('release', () => {
+        console.log('🔓 Wake Lock relâché');
+        if (isPlaying) requestWakeLock();
+      });
+    } else {
+      console.warn("⚠️ Wake Lock API non supportée sur ce navigateur.");
+    }
+  } catch (err) {
+    console.error(`Erreur Wake Lock: ${err.name}, ${err.message}`);
+  }
+}
+
+// Fonction pour le relâcher
+async function releaseWakeLock() {
+  if (wakeLock) {
+    await wakeLock.release();
+    wakeLock = null;
+    console.log('🔓 Wake Lock désactivé manuellement');
+  }
+}
+ 
